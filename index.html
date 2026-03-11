@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yard Garden Planner</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Scale Layout Studio</p>
+        <h1>Yard garden planner</h1>
+        <p class="hero-copy">
+          Start with an empty yard, enter planter dimensions in feet, or add preset plants,
+          a lemon tree, ground cover, and stepping stones. Every item stays to scale and can
+          be dragged and rotated against the scanned plan.
+        </p>
+      </div>
+      <div class="hero-note">
+        <span>Updated measurement</span>
+        <strong>Walkway: 56&quot;</strong>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="sidebar panel">
+        <div class="sidebar-header">
+          <div>
+            <p class="section-label">Toolkit</p>
+            <h2 class="sidebar-title">Plan and place scaled yard pieces</h2>
+          </div>
+          <button id="openReferenceButton" type="button" class="ghost sidebar-utility">Open full scan</button>
+        </div>
+
+        <div class="sidebar-summary">
+          <article class="summary-card">
+            <span>Placed items</span>
+            <strong id="itemCountValue">0</strong>
+          </article>
+          <article class="summary-card">
+            <span>Selected</span>
+            <strong id="selectedItemValue">None</strong>
+          </article>
+        </div>
+
+        <div class="tool-tabs" role="tablist" aria-label="Planner tools">
+          <button id="buildTab" type="button" class="tool-tab active" data-tool-panel="buildPanel" aria-selected="true">Build</button>
+          <button id="libraryTab" type="button" class="tool-tab" data-tool-panel="libraryPanel" aria-selected="false">Library</button>
+          <button id="itemsTab" type="button" class="tool-tab" data-tool-panel="itemsPanel" aria-selected="false">Items</button>
+        </div>
+
+        <div class="tool-panels">
+          <section id="buildPanel" class="tool-panel active" data-tool-panel-body>
+            <div class="tool-panel-scroll">
+              <section class="tool-card">
+                <p class="section-label">Add planter</p>
+                <form id="addBoxForm" class="add-box-form">
+                  <div class="field-grid">
+                    <label class="field">
+                      <span>Width (ft)</span>
+                      <input id="boxWidthInput" type="number" min="0.5" step="0.25" value="4" required />
+                    </label>
+                    <label class="field">
+                      <span>Depth (ft)</span>
+                      <input id="boxHeightInput" type="number" min="0.5" step="0.25" value="4" required />
+                    </label>
+                  </div>
+                  <button id="addBoxButton" type="submit">Add planter</button>
+                  <p id="formMessage" class="form-message" aria-live="polite"></p>
+                </form>
+              </section>
+
+              <section class="tool-card">
+                <p class="section-label">Controls</p>
+                <div class="action-grid">
+                  <button id="rotateLeftButton" type="button" class="ghost">Rotate left</button>
+                  <button id="rotateRightButton" type="button" class="ghost">Rotate right</button>
+                  <button id="removeBoxButton" type="button" class="ghost">Remove selected</button>
+                  <button id="clearAllButton" type="button" class="ghost">Clear all items</button>
+                </div>
+
+                <div class="control-stack">
+                  <div class="slider-card">
+                    <div class="slider-header">
+                      <span>Board zoom</span>
+                      <strong id="zoomValue">100%</strong>
+                    </div>
+                    <div class="slider-row">
+                      <button id="zoomOutButton" type="button" class="ghost small">-</button>
+                      <input id="zoomRange" type="range" min="0.7" max="1.8" step="0.05" value="1" />
+                      <button id="zoomInButton" type="button" class="ghost small">+</button>
+                    </div>
+                  </div>
+
+                  <div class="slider-card">
+                    <div class="slider-header">
+                      <span>Scan overlay</span>
+                      <strong id="overlayValue">58%</strong>
+                    </div>
+                    <input id="overlayRange" type="range" min="0" max="0.9" step="0.05" value="0.58" />
+                  </div>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <section id="libraryPanel" class="tool-panel" data-tool-panel-body hidden>
+            <div class="tool-panel-scroll">
+              <section class="tool-card">
+                <p class="section-label">Landscape library</p>
+                <p class="helper-copy">
+                  Search and add scaled plants, trees, ground treatments, and site furniture without scrolling through the whole toolbox.
+                </p>
+                <label class="search-field">
+                  <span>Search library</span>
+                  <input id="librarySearchInput" type="search" placeholder="Lemon, rosemary, chair..." />
+                </label>
+              </section>
+
+              <div id="presetGrid" class="preset-grid">
+                <button type="button" class="palette-button ghost" data-item-kind="plant">
+                  <span class="palette-emoji">🌿</span>
+                  <span>Plant</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="lemonTree">
+                  <span class="palette-emoji">🍋</span>
+                  <span>Lemon tree</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="woodChips">
+                  <span class="palette-emoji">🪵</span>
+                  <span>Wood chips</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="steppingStone">
+                  <span class="palette-emoji">🪨</span>
+                  <span>Stepping stone</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="manzanita">
+                  <span class="palette-emoji">🌳</span>
+                  <span>Manzanita</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="californiaLilac">
+                  <span class="palette-emoji">💠</span>
+                  <span>California lilac</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="californiaPoppy">
+                  <span class="palette-emoji">🏵️</span>
+                  <span>California poppy</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="hummingbirdSage">
+                  <span class="palette-emoji">🌺</span>
+                  <span>Hummingbird sage</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="commonYarrow">
+                  <span class="palette-emoji">💮</span>
+                  <span>Common yarrow</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="deergrass">
+                  <span class="palette-emoji">🌾</span>
+                  <span>Deergrass</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="pomegranateTree">
+                  <span class="palette-emoji">🍎</span>
+                  <span>Pomegranate tree</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="whiteRufflesPoppy">
+                  <span class="palette-emoji">🌼</span>
+                  <span>White ruffles poppy</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="passionFruit">
+                  <span class="palette-emoji">🍇</span>
+                  <span>Passion fruit</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="rockingChair">
+                  <span class="palette-emoji">🪑</span>
+                  <span>Rocking chair</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="lavender">
+                  <span class="palette-emoji">🪻</span>
+                  <span>Lavender</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="rosemary">
+                  <span class="palette-emoji">🌿</span>
+                  <span>Rosemary</span>
+                </button>
+              </div>
+              <p id="libraryEmptyState" class="library-empty" hidden>No matching library items.</p>
+            </div>
+          </section>
+
+          <section id="itemsPanel" class="tool-panel" data-tool-panel-body hidden>
+            <div class="tool-panel-scroll">
+              <section id="selectionCard" class="selection-card" aria-live="polite"></section>
+              <section class="tool-card">
+                <div class="section-heading">
+                  <p class="section-label">Placed items</p>
+                </div>
+                <p class="helper-copy">
+                  Select an item on the board or from the list to inspect it here, then rotate or remove it from the build tab.
+                </p>
+                <div id="itemList" class="box-list" aria-live="polite"></div>
+              </section>
+            </div>
+          </section>
+        </div>
+      </aside>
+
+      <section class="planner-wrap panel">
+        <div class="planner-header">
+          <div>
+            <p class="section-label">Planner board</p>
+            <h2>Measured overlay + scaled movable yard pieces</h2>
+          </div>
+          <div class="planner-badge">Snap: 3 in / Rotate: 90°</div>
+        </div>
+
+        <div class="board-frame">
+          <div class="legend-row">
+            <span><i class="legend-swatch legend-yard"></i> valid yard zone</span>
+            <span><i class="legend-swatch legend-valid"></i> inside yard zone</span>
+            <span><i class="legend-swatch legend-invalid"></i> outside yard zone</span>
+          </div>
+          <div class="board-scroll" id="boardScroll">
+            <svg id="plannerSvg" xmlns="http://www.w3.org/2000/svg" viewBox="-1.5 -2.5 51 47.8" role="img"
+              aria-label="Scaled yard layout with movable planters, plants, lemon tree, ground cover, and stepping stones">
+              <defs>
+                <pattern id="smallGrid" width="1" height="1" patternUnits="userSpaceOnUse">
+                  <path d="M 1 0 L 0 0 0 1" fill="none" stroke="rgba(83, 90, 62, 0.13)" stroke-width="0.03" />
+                </pattern>
+                <pattern id="largeGrid" width="4" height="4" patternUnits="userSpaceOnUse">
+                  <rect width="4" height="4" fill="url(#smallGrid)" />
+                  <path d="M 4 0 L 0 0 0 4" fill="none" stroke="rgba(65, 73, 45, 0.22)" stroke-width="0.06" />
+                </pattern>
+                <pattern id="drivewayPattern" width="2" height="2" patternUnits="userSpaceOnUse"
+                  patternTransform="rotate(45)">
+                  <line x1="0" y1="0" x2="0" y2="2" stroke="rgba(41, 46, 55, 0.18)" stroke-width="0.16" />
+                </pattern>
+                <clipPath id="siteClip">
+                  <rect x="0" y="0" width="48" height="42.25" rx="0.55" />
+                </clipPath>
+                <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="0.4" stdDeviation="0.3" flood-color="rgba(37, 31, 20, 0.2)" />
+                </filter>
+              </defs>
+
+              <rect x="-1.5" y="-2.5" width="51" height="47.8" class="paper" />
+              <rect x="0" y="0" width="48" height="42.25" class="site-frame" />
+
+              <g clip-path="url(#siteClip)">
+                <image id="referenceImage" href="./assets/yard-board-reference.jpeg" x="0" y="0" width="48"
+                  height="42.25" preserveAspectRatio="none" />
+                <rect x="0" y="0" width="48" height="42.25" class="scan-wash" />
+                <rect x="0" y="0" width="48" height="42.25" fill="url(#largeGrid)" />
+              </g>
+
+              <g id="traceLayer"></g>
+              <g id="itemLayer"></g>
+            </svg>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="referenceDialog" class="reference-dialog">
+    <form method="dialog" class="reference-dialog-shell">
+      <div class="reference-dialog-head">
+        <div>
+          <p class="section-label">Reference</p>
+          <h3>Full yard scan</h3>
+        </div>
+        <button id="closeReferenceButton" type="submit" class="ghost sidebar-utility">Close</button>
+      </div>
+      <p class="helper-copy">Use this uncropped scan when you want to compare the planning board against the full source image.</p>
+      <img src="./assets/reference-scan.jpeg" alt="Full scanned yard plan" />
+    </form>
+  </dialog>
+
+  <script src="./app.js"></script>
+</body>
+
+</html>
