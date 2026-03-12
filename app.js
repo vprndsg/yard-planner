@@ -5,7 +5,6 @@ const BASE_BOARD_WIDTH = 780;
 const VIEWBOX = { width: 51, height: 47.8 };
 const DEFAULT_ZOOM = window.innerWidth < 780 ? 0.84 : 1.08;
 const DEFAULT_OVERLAY = 0.58;
-const MOBILE_MOVE_ARM_MS = 450;
 const ITEM_TYPES = {
   planter: {
     label: 'Planter',
@@ -200,6 +199,7 @@ const state = {
   activePanel: loadPanel('panel', 'buildPanel'),
   zoom: loadNumber('zoom', DEFAULT_ZOOM, 0.7, 1.8),
   overlay: loadNumber('overlay', DEFAULT_OVERLAY, 0, 0.9),
+  mobileMoveActive: false,
 };
 state.selectedId = state.items[0]?.id ?? null;
 
@@ -213,6 +213,7 @@ const addBoxForm = document.getElementById('addBoxForm');
 const boxWidthInput = document.getElementById('boxWidthInput');
 const boxHeightInput = document.getElementById('boxHeightInput');
 const formMessage = document.getElementById('formMessage');
+const moveSelectedButton = document.getElementById('moveSelectedButton');
 const rotateLeftButton = document.getElementById('rotateLeftButton');
 const rotateRightButton = document.getElementById('rotateRightButton');
 const removeBoxButton = document.getElementById('removeBoxButton');
@@ -226,8 +227,6 @@ const toolPanels = Array.from(document.querySelectorAll('[data-tool-panel-body]'
 const selectionCard = document.getElementById('selectionCard');
 
 let dragState = null;
-let mobileMoveArm = null;
-let mobileMoveArmTimer = null;
 
 buildTraceLayer();
 wireControls();
@@ -425,6 +424,7 @@ function wireControls() {
   addBoxForm.addEventListener('submit', handleAddPlanter);
   boxWidthInput.addEventListener('input', clearFormMessage);
   boxHeightInput.addEventListener('input', clearFormMessage);
+  moveSelectedButton.addEventListener('click', () => setMobileMoveActive(!state.mobileMoveActive));
   rotateLeftButton.addEventListener('click', () => rotateSelected(-90));
   rotateRightButton.addEventListener('click', () => rotateSelected(90));
   removeBoxButton.addEventListener('click', removeSelectedItem);
@@ -455,14 +455,13 @@ function render() {
   renderLibraryFilter();
   syncToolPanels();
   renderBoardSize();
-  syncBoardInteractionState();
   updateActionState();
 }
 
 function renderSelectionCard() {
   const selectedItem = getSelectedItem();
   const mobileMoveCopy = isMobileMoveMode()
-    ? '<div class="selection-copy mobile-selection-tip">Phone: tap once to select, then double-tap and drag this item to move it.</div>'
+    ? '<div class="selection-copy mobile-selection-tip">Phone: tap an item, tap Move selected, then drag it on the map.</div>'
     : '';
 
   if (!selectedItem) {
@@ -659,47 +658,36 @@ function isMobileMoveMode() {
   return window.matchMedia('(pointer: coarse)').matches || window.innerWidth <= 720;
 }
 
-function armMobileMove(itemId) {
-  if (mobileMoveArmTimer) {
-    window.clearTimeout(mobileMoveArmTimer);
-  }
-  mobileMoveArm = {
-    itemId,
-    expiresAt: Date.now() + MOBILE_MOVE_ARM_MS,
-  };
-  syncBoardInteractionState();
-  mobileMoveArmTimer = window.setTimeout(() => {
-    if (mobileMoveArm?.itemId === itemId && mobileMoveArm.expiresAt <= Date.now()) {
-      clearMobileMoveArm();
-    }
-  }, MOBILE_MOVE_ARM_MS + 20);
-}
-
-function clearMobileMoveArm() {
-  if (mobileMoveArmTimer) {
-    window.clearTimeout(mobileMoveArmTimer);
-    mobileMoveArmTimer = null;
-  }
-  mobileMoveArm = null;
+function setMobileMoveActive(nextActive) {
+  state.mobileMoveActive = Boolean(nextActive) && isMobileMoveMode() && Boolean(state.selectedId);
+  renderMobileMoveButton();
   syncBoardInteractionState();
 }
 
-function isMobileMoveArmed(itemId) {
-  return Boolean(mobileMoveArm && mobileMoveArm.itemId === itemId && mobileMoveArm.expiresAt >= Date.now());
+function renderMobileMoveButton() {
+  const active = state.mobileMoveActive && Boolean(state.selectedId);
+  moveSelectedButton.classList.toggle('active', active);
+  moveSelectedButton.setAttribute('aria-pressed', String(active));
+  moveSelectedButton.textContent = active ? 'Drag selected' : 'Move selected';
 }
 
 function syncBoardInteractionState() {
-  const moveArmed = Boolean(mobileMoveArm && mobileMoveArm.expiresAt >= Date.now());
-  boardScroll.classList.toggle('move-armed', moveArmed);
+  boardScroll.classList.toggle('move-active', Boolean(state.mobileMoveActive));
   boardScroll.classList.toggle('dragging-item', Boolean(dragState));
 }
 
 function updateActionState() {
   const hasSelection = Boolean(state.selectedId);
+  if (!hasSelection) {
+    state.mobileMoveActive = false;
+  }
+  moveSelectedButton.disabled = !hasSelection;
+  renderMobileMoveButton();
   rotateLeftButton.disabled = !hasSelection;
   rotateRightButton.disabled = !hasSelection;
   removeBoxButton.disabled = !hasSelection;
   clearAllButton.disabled = !state.items.length;
+  syncBoardInteractionState();
 }
 
 function handleAddPlanter(event) {
@@ -810,9 +798,6 @@ function getSelectedItem() {
 }
 
 function selectItem(itemId) {
-  if (mobileMoveArm && mobileMoveArm.itemId !== itemId) {
-    clearMobileMoveArm();
-  }
   state.selectedId = itemId;
   updateItemSelectionClasses();
   renderSelectionCard();
@@ -867,12 +852,10 @@ function startDrag(event) {
   const touchMoveGesture = isMobileMoveMode() && event.pointerType === 'touch';
   if (touchMoveGesture) {
     event.preventDefault();
-    if (!isMobileMoveArmed(itemId)) {
+    if (!state.mobileMoveActive) {
       selectItem(itemId);
-      armMobileMove(itemId);
       return;
     }
-    clearMobileMoveArm();
   } else {
     event.preventDefault();
   }
@@ -923,6 +906,9 @@ function endDrag(event) {
     return;
   }
 
+  if (isMobileMoveMode()) {
+    state.mobileMoveActive = false;
+  }
   persist();
   dragState = null;
   render();

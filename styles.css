@@ -49,6 +49,11 @@ button {
   box-shadow: 0 10px 22px rgba(138, 64, 46, 0.22);
   cursor: pointer;
   transition: transform 140ms ease, box-shadow 140ms ease, opacity 140ms ease;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 button:hover {
@@ -179,10 +184,15 @@ input[type="search"]:focus {
 }
 
 .tool-tab.active,
-.tool-tab[aria-selected="true"] {
+.tool-tab[aria-selected="true"],
+.mobile-move-button.active {
   color: #fefbf6;
   background: linear-gradient(135deg, var(--accent), var(--accent-deep));
   box-shadow: 0 10px 22px rgba(138, 64, 46, 0.18);
+}
+
+.mobile-move-button {
+  display: none;
 }
 
 .tool-panels,
@@ -463,6 +473,9 @@ input[type="search"]:focus {
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.45;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .planner-wrap {
@@ -489,11 +502,22 @@ input[type="search"]:focus {
   background: linear-gradient(180deg, rgba(237, 225, 199, 0.55), rgba(248, 242, 233, 0.78));
   border: 1px solid rgba(84, 70, 48, 0.08);
   min-height: 520px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.board-scroll.move-armed,
+.board-scroll.move-active,
 .board-scroll.dragging-item {
   touch-action: none;
+}
+
+.board-frame,
+.board-frame * {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 #plannerSvg {
@@ -789,6 +813,10 @@ input[type="search"]:focus {
   }
 
   .mobile-board-tip {
+    display: block;
+  }
+
+  .mobile-move-button {
     display: block;
   }
 
