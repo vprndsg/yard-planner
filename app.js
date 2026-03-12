@@ -216,12 +216,6 @@ const rotateLeftButton = document.getElementById('rotateLeftButton');
 const rotateRightButton = document.getElementById('rotateRightButton');
 const removeBoxButton = document.getElementById('removeBoxButton');
 const clearAllButton = document.getElementById('clearAllButton');
-const zoomRange = document.getElementById('zoomRange');
-const overlayRange = document.getElementById('overlayRange');
-const zoomValue = document.getElementById('zoomValue');
-const overlayValue = document.getElementById('overlayValue');
-const zoomOutButton = document.getElementById('zoomOutButton');
-const zoomInButton = document.getElementById('zoomInButton');
 const presetButtons = Array.from(document.querySelectorAll('[data-item-kind]'));
 const presetGrid = document.getElementById('presetGrid');
 const librarySearchInput = document.getElementById('librarySearchInput');
@@ -425,9 +419,6 @@ function arrowMark(x, y, vertical, reverse = false) {
 }
 
 function wireControls() {
-  zoomRange.value = state.zoom.toFixed(2);
-  overlayRange.value = state.overlay.toFixed(2);
-
   addBoxForm.addEventListener('submit', handleAddPlanter);
   boxWidthInput.addEventListener('input', clearFormMessage);
   boxHeightInput.addEventListener('input', clearFormMessage);
@@ -435,10 +426,6 @@ function wireControls() {
   rotateRightButton.addEventListener('click', () => rotateSelected(90));
   removeBoxButton.addEventListener('click', removeSelectedItem);
   clearAllButton.addEventListener('click', clearAllItems);
-  zoomOutButton.addEventListener('click', () => setZoom(state.zoom - 0.1));
-  zoomInButton.addEventListener('click', () => setZoom(state.zoom + 0.1));
-  zoomRange.addEventListener('input', (event) => setZoom(Number(event.target.value)));
-  overlayRange.addEventListener('input', (event) => setOverlay(Number(event.target.value)));
   presetButtons.forEach((button) => button.addEventListener('click', () => handleAddPresetItem(button.dataset.itemKind)));
   presetButtons.forEach((button) => {
     const config = ITEM_TYPES[button.dataset.itemKind];
@@ -465,7 +452,6 @@ function render() {
   renderLibraryFilter();
   syncToolPanels();
   renderBoardSize();
-  updateControlText();
   updateActionState();
 }
 
@@ -660,13 +646,6 @@ function renderBoardSize() {
   plannerSvg.setAttribute('height', String(height));
 }
 
-function updateControlText() {
-  zoomValue.textContent = `${Math.round(state.zoom * 100)}%`;
-  overlayValue.textContent = `${Math.round(state.overlay * 100)}%`;
-  zoomRange.value = state.zoom.toFixed(2);
-  overlayRange.value = state.overlay.toFixed(2);
-}
-
 function updateActionState() {
   const hasSelection = Boolean(state.selectedId);
   rotateLeftButton.disabled = !hasSelection;
@@ -825,20 +804,6 @@ function clearAllItems() {
   persist();
   render();
   setFormMessage('Cleared all movable items.', 'info');
-}
-
-function setZoom(nextZoom) {
-  state.zoom = clamp(Number(nextZoom.toFixed(2)), 0.7, 1.8);
-  localStorage.setItem(`${STORAGE_KEY}:zoom`, String(state.zoom));
-  renderBoardSize();
-  updateControlText();
-}
-
-function setOverlay(nextOverlay) {
-  state.overlay = clamp(Number(nextOverlay.toFixed(2)), 0, 0.9);
-  localStorage.setItem(`${STORAGE_KEY}:overlay`, String(state.overlay));
-  renderReferenceOpacity();
-  updateControlText();
 }
 
 function startDrag(event) {
