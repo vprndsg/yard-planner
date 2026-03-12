@@ -457,6 +457,14 @@ input[type="search"]:focus {
   align-self: start;
 }
 
+.mobile-board-tip {
+  display: none;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
 .planner-wrap {
   padding: 22px;
   display: grid;
@@ -476,10 +484,16 @@ input[type="search"]:focus {
 
 .board-scroll {
   overflow: auto;
+  overscroll-behavior: contain;
   border-radius: 22px;
   background: linear-gradient(180deg, rgba(237, 225, 199, 0.55), rgba(248, 242, 233, 0.78));
   border: 1px solid rgba(84, 70, 48, 0.08);
   min-height: 520px;
+}
+
+.board-scroll.move-armed,
+.board-scroll.dragging-item {
+  touch-action: none;
 }
 
 #plannerSvg {
@@ -766,12 +780,16 @@ input[type="search"]:focus {
   }
 
   .sidebar {
-    order: 1;
+    order: 2;
     gap: 14px;
   }
 
   .planner-wrap {
-    order: 2;
+    order: 1;
+  }
+
+  .mobile-board-tip {
+    display: block;
   }
 
   .field-grid,

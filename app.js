@@ -5,6 +5,7 @@ const BASE_BOARD_WIDTH = 780;
 const VIEWBOX = { width: 51, height: 47.8 };
 const DEFAULT_ZOOM = window.innerWidth < 780 ? 0.84 : 1.08;
 const DEFAULT_OVERLAY = 0.58;
+const MOBILE_MOVE_ARM_MS = 450;
 const ITEM_TYPES = {
   planter: {
     label: 'Planter',
@@ -225,6 +226,8 @@ const toolPanels = Array.from(document.querySelectorAll('[data-tool-panel-body]'
 const selectionCard = document.getElementById('selectionCard');
 
 let dragState = null;
+let mobileMoveArm = null;
+let mobileMoveArmTimer = null;
 
 buildTraceLayer();
 wireControls();
@@ -452,17 +455,22 @@ function render() {
   renderLibraryFilter();
   syncToolPanels();
   renderBoardSize();
+  syncBoardInteractionState();
   updateActionState();
 }
 
 function renderSelectionCard() {
   const selectedItem = getSelectedItem();
+  const mobileMoveCopy = isMobileMoveMode()
+    ? '<div class="selection-copy mobile-selection-tip">Phone: tap once to select, then double-tap and drag this item to move it.</div>'
+    : '';
 
   if (!selectedItem) {
     selectionCard.className = 'selection-card empty';
     selectionCard.innerHTML = `
       <p class="section-label">Selected item</p>
       <div class="selection-copy">Select an item on the board to inspect its footprint, status, and notes without expanding every row in the list.</div>
+      ${mobileMoveCopy}
     `;
     return;
   }
@@ -489,6 +497,7 @@ function renderSelectionCard() {
       <div>Center: x ${formatFeet(selectedItem.x)} ft, y ${formatFeet(selectedItem.y)} ft</div>
     </div>
     ${notes ? `<div class="selection-copy">${notes}</div>` : ''}
+    ${mobileMoveCopy}
   `;
 }
 
@@ -646,6 +655,45 @@ function renderBoardSize() {
   plannerSvg.setAttribute('height', String(height));
 }
 
+function isMobileMoveMode() {
+  return window.matchMedia('(pointer: coarse)').matches || window.innerWidth <= 720;
+}
+
+function armMobileMove(itemId) {
+  if (mobileMoveArmTimer) {
+    window.clearTimeout(mobileMoveArmTimer);
+  }
+  mobileMoveArm = {
+    itemId,
+    expiresAt: Date.now() + MOBILE_MOVE_ARM_MS,
+  };
+  syncBoardInteractionState();
+  mobileMoveArmTimer = window.setTimeout(() => {
+    if (mobileMoveArm?.itemId === itemId && mobileMoveArm.expiresAt <= Date.now()) {
+      clearMobileMoveArm();
+    }
+  }, MOBILE_MOVE_ARM_MS + 20);
+}
+
+function clearMobileMoveArm() {
+  if (mobileMoveArmTimer) {
+    window.clearTimeout(mobileMoveArmTimer);
+    mobileMoveArmTimer = null;
+  }
+  mobileMoveArm = null;
+  syncBoardInteractionState();
+}
+
+function isMobileMoveArmed(itemId) {
+  return Boolean(mobileMoveArm && mobileMoveArm.itemId === itemId && mobileMoveArm.expiresAt >= Date.now());
+}
+
+function syncBoardInteractionState() {
+  const moveArmed = Boolean(mobileMoveArm && mobileMoveArm.expiresAt >= Date.now());
+  boardScroll.classList.toggle('move-armed', moveArmed);
+  boardScroll.classList.toggle('dragging-item', Boolean(dragState));
+}
+
 function updateActionState() {
   const hasSelection = Boolean(state.selectedId);
   rotateLeftButton.disabled = !hasSelection;
@@ -762,6 +810,9 @@ function getSelectedItem() {
 }
 
 function selectItem(itemId) {
+  if (mobileMoveArm && mobileMoveArm.itemId !== itemId) {
+    clearMobileMoveArm();
+  }
   state.selectedId = itemId;
   updateItemSelectionClasses();
   renderSelectionCard();
@@ -807,11 +858,23 @@ function clearAllItems() {
 }
 
 function startDrag(event) {
-  event.preventDefault();
   const itemId = event.currentTarget.dataset.itemId;
   const item = state.items.find((entry) => entry.id === itemId);
   if (!item) {
     return;
+  }
+
+  const touchMoveGesture = isMobileMoveMode() && event.pointerType === 'touch';
+  if (touchMoveGesture) {
+    event.preventDefault();
+    if (!isMobileMoveArmed(itemId)) {
+      selectItem(itemId);
+      armMobileMove(itemId);
+      return;
+    }
+    clearMobileMoveArm();
+  } else {
+    event.preventDefault();
   }
 
   state.selectedId = itemId;
@@ -829,7 +892,11 @@ function startDrag(event) {
     offsetY: point.y - item.y,
   };
 
-  event.currentTarget.setPointerCapture(event.pointerId);
+  try {
+    event.currentTarget.setPointerCapture(event.pointerId);
+  } catch (error) {
+    // Ignore synthetic or unsupported pointer-capture failures.
+  }
 }
 
 function handlePointerMove(event) {
