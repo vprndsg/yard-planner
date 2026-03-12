@@ -184,15 +184,10 @@ input[type="search"]:focus {
 }
 
 .tool-tab.active,
-.tool-tab[aria-selected="true"],
-.mobile-move-button.active {
+.tool-tab[aria-selected="true"] {
   color: #fefbf6;
   background: linear-gradient(135deg, var(--accent), var(--accent-deep));
   box-shadow: 0 10px 22px rgba(138, 64, 46, 0.18);
-}
-
-.mobile-move-button {
-  display: none;
 }
 
 .tool-panels,
@@ -508,7 +503,6 @@ input[type="search"]:focus {
   -webkit-tap-highlight-color: transparent;
 }
 
-.board-scroll.move-active,
 .board-scroll.dragging-item {
   touch-action: none;
 }
@@ -518,6 +512,8 @@ input[type="search"]:focus {
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-drag: none;
 }
 
 #plannerSvg {
@@ -626,6 +622,11 @@ input[type="search"]:focus {
 .movable-item {
   cursor: grab;
   touch-action: none;
+  -webkit-user-drag: none;
+}
+
+.movable-item * {
+  -webkit-user-drag: none;
 }
 
 .movable-item:active {
@@ -813,10 +814,6 @@ input[type="search"]:focus {
   }
 
   .mobile-board-tip {
-    display: block;
-  }
-
-  .mobile-move-button {
     display: block;
   }
 
