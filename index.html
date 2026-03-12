@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Yard Garden Planner</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 
@@ -48,9 +49,12 @@
         </div>
 
         <div class="tool-tabs" role="tablist" aria-label="Planner tools">
-          <button id="buildTab" type="button" class="tool-tab active" data-tool-panel="buildPanel" aria-selected="true">Build</button>
-          <button id="libraryTab" type="button" class="tool-tab" data-tool-panel="libraryPanel" aria-selected="false">Library</button>
-          <button id="itemsTab" type="button" class="tool-tab" data-tool-panel="itemsPanel" aria-selected="false">Items</button>
+          <button id="buildTab" type="button" class="tool-tab active" data-tool-panel="buildPanel"
+            aria-selected="true">Build</button>
+          <button id="libraryTab" type="button" class="tool-tab" data-tool-panel="libraryPanel"
+            aria-selected="false">Library</button>
+          <button id="itemsTab" type="button" class="tool-tab" data-tool-panel="itemsPanel"
+            aria-selected="false">Items</button>
         </div>
 
         <div class="tool-panels">
@@ -113,7 +117,8 @@
               <section class="tool-card">
                 <p class="section-label">Landscape library</p>
                 <p class="helper-copy">
-                  Search and add scaled plants, trees, ground treatments, and site furniture without scrolling through the whole toolbox.
+                  Search and add scaled plants, trees, ground treatments, and site furniture without scrolling through
+                  the whole toolbox.
                 </p>
                 <label class="search-field">
                   <span>Search library</span>
@@ -186,6 +191,14 @@
                   <span class="palette-emoji">🌿</span>
                   <span>Rosemary</span>
                 </button>
+                <button type="button" class="palette-button ghost" data-item-kind="bench">
+                  <span class="palette-emoji">🪑</span>
+                  <span>Bench</span>
+                </button>
+                <button type="button" class="palette-button ghost" data-item-kind="trellis">
+                  <span class="palette-emoji">🪜</span>
+                  <span>Trellis</span>
+                </button>
               </div>
               <p id="libraryEmptyState" class="library-empty" hidden>No matching library items.</p>
             </div>
@@ -199,7 +212,8 @@
                   <p class="section-label">Placed items</p>
                 </div>
                 <p class="helper-copy">
-                  Select an item on the board or from the list to inspect it here, then rotate or remove it from the build tab.
+                  Select an item on the board or from the list to inspect it here, then rotate or remove it from the
+                  build tab.
                 </p>
                 <div id="itemList" class="box-list" aria-live="polite"></div>
               </section>
@@ -274,7 +288,8 @@
         </div>
         <button id="closeReferenceButton" type="submit" class="ghost sidebar-utility">Close</button>
       </div>
-      <p class="helper-copy">Use this uncropped scan when you want to compare the planning board against the full source image.</p>
+      <p class="helper-copy">Use this uncropped scan when you want to compare the planning board against the full source
+        image.</p>
       <img src="./assets/reference-scan.jpeg" alt="Full scanned yard plan" />
     </form>
   </dialog>

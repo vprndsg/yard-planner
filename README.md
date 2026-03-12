@@ -29,3 +29,11 @@ Then open `http://localhost:8000`.
 ## Tuning later
 
 If you want to keep refining the overlay, edit the geometry constants and shape builders near the top of `/Users/michaelphillips/Desktop/yard-garden-planner/app.js`.
+
+## Publish on GitHub Pages
+
+This repository is set up to publish directly from the `main` branch on GitHub Pages.
+
+1. Push this project to `https://github.com/vprndsg/yard-planner.git` on the `main` branch.
+2. In the repository settings, publish GitHub Pages from the `main` branch and the `/ (root)` folder.
+3. Open `https://vprndsg.github.io/yard-planner/`.

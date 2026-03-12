@@ -140,6 +140,18 @@ const ITEM_TYPES = {
     scientificName: 'Salvia rosmarinus',
     bio: 'Aromatic evergreen woody herb with needle-like leaves, excellent for culinary use.',
     conditions: 'Full sun, well-draining soil, drought-tolerant.'
+  },
+  bench: {
+    label: 'Bench',
+    shortLabel: 'Bench',
+    icon: '🪑',
+    image: 'bench_asset.png'
+  },
+  trellis: {
+    label: 'Trellis',
+    shortLabel: 'Trellis',
+    icon: '🪜',
+    image: 'trellis_asset.png'
   }
 };
 
@@ -781,6 +793,8 @@ function buildPresetSpec(kind) {
     case 'rockingChair': return { width: 2.2, height: 2.5, extra: {} };
     case 'lavender': return { width: 3, height: 3, extra: {} };
     case 'rosemary': return { width: 3.5, height: 3.5, extra: {} };
+    case 'bench': return { width: 4, height: 2, extra: {} };
+    case 'trellis': return { width: 4, height: 1, extra: {} };
     default: return { width: 2, height: 2, extra: {} };
   }
 }
