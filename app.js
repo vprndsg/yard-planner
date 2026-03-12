@@ -228,11 +228,7 @@ const librarySearchInput = document.getElementById('librarySearchInput');
 const libraryEmptyState = document.getElementById('libraryEmptyState');
 const toolTabButtons = Array.from(document.querySelectorAll('[data-tool-panel]'));
 const toolPanels = Array.from(document.querySelectorAll('[data-tool-panel-body]'));
-const itemCountValue = document.getElementById('itemCountValue');
-const selectedItemValue = document.getElementById('selectedItemValue');
 const selectionCard = document.getElementById('selectionCard');
-const openReferenceButton = document.getElementById('openReferenceButton');
-const referenceDialog = document.getElementById('referenceDialog');
 
 let dragState = null;
 
@@ -455,8 +451,6 @@ function wireControls() {
     button.addEventListener('click', () => setActivePanel(button.dataset.toolPanel));
   });
   librarySearchInput.addEventListener('input', renderLibraryFilter);
-  openReferenceButton.addEventListener('click', openReferenceDialog);
-  referenceDialog.addEventListener('click', handleReferenceDialogClick);
 
   window.addEventListener('pointermove', handlePointerMove);
   window.addEventListener('pointerup', endDrag);
@@ -466,7 +460,6 @@ function wireControls() {
 function render() {
   renderReferenceOpacity();
   renderItems();
-  renderSidebarSummary();
   renderSelectionCard();
   renderItemList();
   renderLibraryFilter();
@@ -474,13 +467,6 @@ function render() {
   renderBoardSize();
   updateControlText();
   updateActionState();
-}
-
-function renderSidebarSummary() {
-  const selectedItem = getSelectedItem();
-  itemCountValue.textContent = String(state.items.length);
-  selectedItemValue.textContent = selectedItem ? `${ITEM_TYPES[selectedItem.kind]?.shortLabel ?? 'Item'} ${selectedItem.id}` : 'None';
-  selectedItemValue.title = selectedItem ? `${ITEM_TYPES[selectedItem.kind]?.label ?? 'Item'} ${selectedItem.id}` : 'None';
 }
 
 function renderSelectionCard() {
@@ -558,25 +544,6 @@ function setActivePanel(panelId) {
   state.activePanel = panelId;
   localStorage.setItem(`${STORAGE_KEY}:panel`, panelId);
   syncToolPanels();
-}
-
-function openReferenceDialog() {
-  if (typeof referenceDialog.showModal === 'function') {
-    referenceDialog.showModal();
-    return;
-  }
-
-  referenceDialog.setAttribute('open', 'open');
-}
-
-function handleReferenceDialogClick(event) {
-  if (event.target === referenceDialog) {
-    if (typeof referenceDialog.close === 'function') {
-      referenceDialog.close();
-    } else {
-      referenceDialog.removeAttribute('open');
-    }
-  }
 }
 
 function renderReferenceOpacity() {
@@ -818,7 +785,6 @@ function getSelectedItem() {
 function selectItem(itemId) {
   state.selectedId = itemId;
   updateItemSelectionClasses();
-  renderSidebarSummary();
   renderSelectionCard();
   renderItemList();
   updateActionState();
@@ -885,7 +851,6 @@ function startDrag(event) {
 
   state.selectedId = itemId;
   updateItemSelectionClasses();
-  renderSidebarSummary();
   renderSelectionCard();
   renderItemList();
   updateActionState();

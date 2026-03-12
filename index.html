@@ -13,25 +13,6 @@
   <div class="app-shell">
     <main class="workspace">
       <aside class="sidebar panel">
-        <div class="sidebar-header">
-          <div>
-            <p class="section-label">Toolkit</p>
-            <h2 class="sidebar-title">Plan and place scaled yard pieces</h2>
-          </div>
-          <button id="openReferenceButton" type="button" class="ghost sidebar-utility">Open full scan</button>
-        </div>
-
-        <div class="sidebar-summary">
-          <article class="summary-card">
-            <span>Placed items</span>
-            <strong id="itemCountValue">0</strong>
-          </article>
-          <article class="summary-card">
-            <span>Selected</span>
-            <strong id="selectedItemValue">None</strong>
-          </article>
-        </div>
-
         <div class="tool-tabs" role="tablist" aria-label="Planner tools">
           <button id="buildTab" type="button" class="tool-tab active" data-tool-panel="buildPanel"
             aria-selected="true">Build</button>
@@ -249,21 +230,6 @@
       </section>
     </main>
   </div>
-
-  <dialog id="referenceDialog" class="reference-dialog">
-    <form method="dialog" class="reference-dialog-shell">
-      <div class="reference-dialog-head">
-        <div>
-          <p class="section-label">Reference</p>
-          <h3>Full yard scan</h3>
-        </div>
-        <button id="closeReferenceButton" type="submit" class="ghost sidebar-utility">Close</button>
-      </div>
-      <p class="helper-copy">Use this uncropped scan when you want to compare the planning board against the full source
-        image.</p>
-      <img src="./assets/reference-scan.jpeg" alt="Full scanned yard plan" />
-    </form>
-  </dialog>
 
   <script src="./app.js"></script>
 </body>
