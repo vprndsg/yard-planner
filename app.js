@@ -30,7 +30,7 @@ const ITEM_TYPES = {
     label: 'Wood chips',
     shortLabel: 'Wood chips',
     icon: '🪵',
-    image: 'wood_chips_1773195438388.png'
+    image: 'irregular_wood_chips.png'
   },
   steppingStone: {
     label: 'Stepping stone',
@@ -798,7 +798,7 @@ function buildPresetSpec(kind) {
   switch (kind) {
     case 'plant': return { width: 2, height: 2, extra: {} };
     case 'lemonTree': return { width: 5, height: 5, extra: {} };
-    case 'woodChips': return { width: 4, height: 4, extra: {} };
+    case 'woodChips': return { width: 8, height: 8, extra: {} };
     case 'steppingStone': return buildSteppingStoneSpec();
     case 'manzanita': return { width: 4, height: 4, extra: {} };
     case 'californiaLilac': return { width: 4.5, height: 4.5, extra: {} };
