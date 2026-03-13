@@ -444,6 +444,9 @@ function wireControls() {
   window.addEventListener('pointermove', handlePointerMove);
   window.addEventListener('pointerup', endDrag);
   window.addEventListener('pointercancel', endDrag);
+  window.addEventListener('touchmove', handleTouchMove, { passive: false });
+  window.addEventListener('touchend', endTouchDrag, { passive: false });
+  window.addEventListener('touchcancel', endTouchDrag, { passive: false });
 }
 
 function render() {
@@ -549,6 +552,7 @@ function renderItems() {
 
   itemLayer.querySelectorAll('.movable-item').forEach((element) => {
     element.addEventListener('pointerdown', startDrag);
+    element.addEventListener('touchstart', startTouchDrag, { passive: false });
     element.addEventListener('click', () => selectItem(element.dataset.itemId));
   });
 }
@@ -675,6 +679,7 @@ function beginDrag(event, item) {
   dragState = {
     itemId: item.id,
     pointerId: event.pointerId,
+    inputType: 'pointer',
     element: event.currentTarget,
     offsetX: point.x - item.x,
     offsetY: point.y - item.y,
@@ -686,6 +691,19 @@ function beginDrag(event, item) {
   } catch (error) {
     // Ignore synthetic or unsupported pointer-capture failures.
   }
+}
+
+function beginTouchDrag(element, touch, item) {
+  const point = svgPoint(touch);
+  dragState = {
+    itemId: item.id,
+    touchId: touch.identifier,
+    inputType: 'touch',
+    element,
+    offsetX: point.x - item.x,
+    offsetY: point.y - item.y,
+  };
+  syncBoardInteractionState();
 }
 
 function handleAddPlanter(event) {
@@ -841,19 +859,17 @@ function clearAllItems() {
 }
 
 function startDrag(event) {
+  if (event.pointerType === 'touch') {
+    return;
+  }
+
   const itemId = event.currentTarget.dataset.itemId;
   const item = state.items.find((entry) => entry.id === itemId);
   if (!item) {
     return;
   }
 
-  const touchMoveGesture = isMobileMoveMode() && event.pointerType === 'touch';
-  if (touchMoveGesture) {
-    event.preventDefault();
-    event.stopPropagation();
-  } else {
-    event.preventDefault();
-  }
+  event.preventDefault();
 
   state.selectedId = itemId;
   updateItemSelectionClasses();
@@ -863,13 +879,28 @@ function startDrag(event) {
   beginDrag(event, item);
 }
 
-function handlePointerMove(event) {
-  if (!dragState || event.pointerId !== dragState.pointerId) {
+function startTouchDrag(event) {
+  const itemId = event.currentTarget.dataset.itemId;
+  const item = state.items.find((entry) => entry.id === itemId);
+  const touch = event.changedTouches[0];
+  if (!item || !touch) {
     return;
   }
 
-  if (event.pointerType === 'touch') {
-    event.preventDefault();
+  event.preventDefault();
+  event.stopPropagation();
+
+  state.selectedId = itemId;
+  updateItemSelectionClasses();
+  renderSelectionCard();
+  renderItemList();
+  updateActionState();
+  beginTouchDrag(event.currentTarget, touch, item);
+}
+
+function handlePointerMove(event) {
+  if (!dragState || dragState.inputType !== 'pointer' || event.pointerId !== dragState.pointerId) {
+    return;
   }
 
   const item = state.items.find((entry) => entry.id === dragState.itemId);
@@ -877,20 +908,69 @@ function handlePointerMove(event) {
     return;
   }
 
-  const point = svgPoint(event);
+  moveDraggedItem(item, event);
+}
+
+function endDrag(event) {
+  if (!dragState || dragState.inputType !== 'pointer' || (event.pointerId != null && event.pointerId !== dragState.pointerId)) {
+    return;
+  }
+
+  finishDrag();
+}
+
+function handleTouchMove(event) {
+  if (!dragState || dragState.inputType !== 'touch') {
+    return;
+  }
+
+  const touch = getTrackedTouch(event.changedTouches);
+  if (!touch) {
+    return;
+  }
+
+  event.preventDefault();
+
+  const item = state.items.find((entry) => entry.id === dragState.itemId);
+  if (!item) {
+    return;
+  }
+
+  moveDraggedItem(item, touch);
+}
+
+function endTouchDrag(event) {
+  if (!dragState || dragState.inputType !== 'touch') {
+    return;
+  }
+
+  const touch = getTrackedTouch(event.changedTouches);
+  if (!touch && event.type !== 'touchcancel') {
+    return;
+  }
+
+  event.preventDefault();
+  finishDrag();
+}
+
+function getTrackedTouch(touchList) {
+  if (!dragState || dragState.inputType !== 'touch') {
+    return null;
+  }
+
+  return Array.from(touchList).find((touch) => touch.identifier === dragState.touchId) ?? null;
+}
+
+function moveDraggedItem(item, pointEvent) {
+  const point = svgPoint(pointEvent);
   const next = clampItemCenter(item, point.x - dragState.offsetX, point.y - dragState.offsetY);
   item.x = next.x;
   item.y = next.y;
   dragState.element.setAttribute('transform', getItemTransform(item));
   syncItemVisualState(dragState.element, item);
-  renderItemList();
 }
 
-function endDrag(event) {
-  if (!dragState || (event.pointerId != null && event.pointerId !== dragState.pointerId)) {
-    return;
-  }
-
+function finishDrag() {
   persist();
   dragState = null;
   render();

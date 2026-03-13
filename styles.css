@@ -626,6 +626,7 @@ input[type="search"]:focus {
 }
 
 .movable-item * {
+  touch-action: none;
   -webkit-user-drag: none;
 }
 
