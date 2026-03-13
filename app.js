@@ -5,8 +5,6 @@ const BASE_BOARD_WIDTH = 780;
 const VIEWBOX = { width: 51, height: 47.8 };
 const DEFAULT_ZOOM = window.innerWidth < 780 ? 0.84 : 1.08;
 const DEFAULT_OVERLAY = 0.58;
-const MOBILE_DOUBLE_TAP_MS = 320;
-const MOBILE_DOUBLE_TAP_DISTANCE = 26;
 const ITEM_TYPES = {
   planter: {
     label: 'Planter',
@@ -227,8 +225,6 @@ const toolPanels = Array.from(document.querySelectorAll('[data-tool-panel-body]'
 const selectionCard = document.getElementById('selectionCard');
 
 let dragState = null;
-let mobileTapState = null;
-let mobileTapTimer = null;
 
 buildTraceLayer();
 wireControls();
@@ -464,7 +460,7 @@ function render() {
 function renderSelectionCard() {
   const selectedItem = getSelectedItem();
   const mobileMoveCopy = isMobileMoveMode()
-    ? '<div class="selection-copy mobile-selection-tip">Phone: tap once to select, then double-tap and drag the same item to move it.</div>'
+    ? '<div class="selection-copy mobile-selection-tip">Phone: tap and drag an item to move it.</div>'
     : '';
 
   if (!selectedItem) {
@@ -661,39 +657,6 @@ function isMobileMoveMode() {
   return window.matchMedia('(pointer: coarse)').matches || window.innerWidth <= 720;
 }
 
-function rememberMobileTap(itemId, event) {
-  clearMobileTap();
-  mobileTapState = {
-    itemId,
-    at: Date.now(),
-    x: event.clientX,
-    y: event.clientY,
-  };
-  mobileTapTimer = window.setTimeout(clearMobileTap, MOBILE_DOUBLE_TAP_MS + 40);
-}
-
-function clearMobileTap() {
-  if (mobileTapTimer) {
-    window.clearTimeout(mobileTapTimer);
-    mobileTapTimer = null;
-  }
-  mobileTapState = null;
-}
-
-function isDoubleTapOnItem(itemId, event) {
-  if (!mobileTapState || mobileTapState.itemId !== itemId) {
-    return false;
-  }
-
-  if (Date.now() - mobileTapState.at > MOBILE_DOUBLE_TAP_MS) {
-    return false;
-  }
-
-  const deltaX = event.clientX - mobileTapState.x;
-  const deltaY = event.clientY - mobileTapState.y;
-  return Math.hypot(deltaX, deltaY) <= MOBILE_DOUBLE_TAP_DISTANCE;
-}
-
 function syncBoardInteractionState() {
   boardScroll.classList.toggle('dragging-item', Boolean(dragState));
 }
@@ -727,7 +690,6 @@ function beginDrag(event, item) {
 
 function handleAddPlanter(event) {
   event.preventDefault();
-  clearMobileTap();
 
   const width = snapToGrid(Number(boxWidthInput.value));
   const height = snapToGrid(Number(boxHeightInput.value));
@@ -758,7 +720,6 @@ function handleAddPresetItem(kind) {
     return;
   }
 
-  clearMobileTap();
   const spec = buildPresetSpec(kind);
   if (!canFitOnBoard(spec.width, spec.height)) {
     setFormMessage(`The ${ITEM_TYPES[kind].label.toLowerCase()} footprint is too large for the board.`, 'error');
@@ -835,9 +796,6 @@ function getSelectedItem() {
 }
 
 function selectItem(itemId) {
-  if (mobileTapState && mobileTapState.itemId !== itemId) {
-    clearMobileTap();
-  }
   state.selectedId = itemId;
   updateItemSelectionClasses();
   renderSelectionCard();
@@ -850,7 +808,6 @@ function rotateSelected(delta) {
     return;
   }
 
-  clearMobileTap();
   const item = state.items.find((entry) => entry.id === state.selectedId);
   if (!item) {
     return;
@@ -869,7 +826,6 @@ function removeSelectedItem() {
     return;
   }
 
-  clearMobileTap();
   state.items = state.items.filter((item) => item.id !== state.selectedId);
   state.selectedId = state.items[0]?.id ?? null;
   persist();
@@ -877,7 +833,6 @@ function removeSelectedItem() {
 }
 
 function clearAllItems() {
-  clearMobileTap();
   state.items = [];
   state.selectedId = null;
   persist();
@@ -896,13 +851,6 @@ function startDrag(event) {
   if (touchMoveGesture) {
     event.preventDefault();
     event.stopPropagation();
-    const doubleTap = isDoubleTapOnItem(itemId, event);
-    selectItem(itemId);
-    if (!doubleTap) {
-      rememberMobileTap(itemId, event);
-      return;
-    }
-    clearMobileTap();
   } else {
     event.preventDefault();
   }
