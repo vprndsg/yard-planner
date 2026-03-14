@@ -684,6 +684,13 @@ input[type="search"]:focus {
   font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
 }
 
+.item-icon {
+  width: 1.25em;
+  height: 1.25em;
+  vertical-align: -0.25em;
+  object-fit: contain;
+}
+
 .plant-shadow {
   fill: rgba(62, 73, 42, 0.12);
   stroke: none;

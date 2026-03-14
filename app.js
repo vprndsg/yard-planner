@@ -9,37 +9,37 @@ const ITEM_TYPES = {
   planter: {
     label: 'Planter',
     shortLabel: 'Planter',
-    icon: '▣',
+    icon: '<img src="./assets/icon_planter.png" class="item-icon" />',
     image: 'planter_1773194590250.png'
   },
   plant: {
     label: 'Plant',
     shortLabel: 'Plant',
-    icon: '🌿',
+    icon: '<img src="./assets/icon_plant.png" class="item-icon" />',
     image: 'generic_plant_1773194602469.png'
   },
   lemonTree: {
     label: 'Lemon tree',
     shortLabel: 'Tree',
-    icon: '🍋',
+    icon: '<img src="./assets/icon_lemonTree.png" class="item-icon" />',
     image: 'lemon_tree_1773194550127.png'
   },
   woodChips: {
     label: 'Wood chips',
     shortLabel: 'Wood chips',
-    icon: '🪵',
+    icon: '<img src="./assets/icon_woodChips.png" class="item-icon" />',
     image: 'irregular_wood_chips.png'
   },
   steppingStone: {
     label: 'Stepping stone',
     shortLabel: 'Stone',
-    icon: '◼',
+    icon: '<img src="./assets/icon_steppingStone.png" class="item-icon" />',
     image: 'stepping_stone_1773194577054.png'
   },
   manzanita: {
     label: 'Manzanita',
     shortLabel: 'Manzanita',
-    icon: '🌳',
+    icon: '<img src="./assets/icon_manzanita.png" class="item-icon" />',
     image: 'manzanita_1773194625175.png',
     scientificName: 'Arctostaphylos',
     bio: 'Evergreen shrub with distinctive smooth orange/red bark and stiff, twisting branches.',
@@ -48,7 +48,7 @@ const ITEM_TYPES = {
   californiaLilac: {
     label: 'California lilac',
     shortLabel: 'Lilac',
-    icon: '💠',
+    icon: '<img src="./assets/icon_californiaLilac.png" class="item-icon" />',
     image: 'california_lilac_1773194638605.png',
     scientificName: 'Ceanothus',
     bio: 'Fast-growing shrub famous for its brilliant displays of blue, purple, or white flowers.',
@@ -57,7 +57,7 @@ const ITEM_TYPES = {
   californiaPoppy: {
     label: 'California poppy',
     shortLabel: 'Poppy',
-    icon: '🏵️',
+    icon: '<img src="./assets/icon_californiaPoppy.png" class="item-icon" />',
     image: 'california_poppy_1773194650514.png',
     scientificName: 'Eschscholzia californica',
     bio: 'The state flower of California, known for its vibrant orange, cup-shaped flowers that close at night.',
@@ -66,7 +66,7 @@ const ITEM_TYPES = {
   hummingbirdSage: {
     label: 'Hummingbird sage',
     shortLabel: 'Sage',
-    icon: '🌺',
+    icon: '<img src="./assets/icon_hummingbirdSage.png" class="item-icon" />',
     image: 'hummingbird_sage_1773194663143.png',
     scientificName: 'Salvia spathacea',
     bio: 'Highly fragrant, drought-tolerant perennial featuring tall, magenta flower spikes that attract hummingbirds.',
@@ -75,7 +75,7 @@ const ITEM_TYPES = {
   commonYarrow: {
     label: 'Common yarrow',
     shortLabel: 'Yarrow',
-    icon: '💮',
+    icon: '<img src="./assets/icon_commonYarrow.png" class="item-icon" />',
     image: 'common_yarrow_1773194679752.png',
     scientificName: 'Achillea millefolium',
     bio: 'Hardy perennial herb with fern-like leaves and flat clusters of tiny, usually white flowers.',
@@ -84,7 +84,7 @@ const ITEM_TYPES = {
   deergrass: {
     label: 'Deergrass',
     shortLabel: 'Grass',
-    icon: '🌾',
+    icon: '<img src="./assets/icon_deergrass.png" class="item-icon" />',
     image: 'deergrass_1773194706106.png',
     scientificName: 'Muhlenbergia rigens',
     bio: 'A large, dense, clumping perennial grass native to California with long, thin foliage.',
@@ -93,7 +93,7 @@ const ITEM_TYPES = {
   pomegranateTree: {
     label: 'Pomegranate tree',
     shortLabel: 'Pomegranate',
-    icon: '🍎',
+    icon: '<img src="./assets/icon_pomegranateTree.png" class="item-icon" />',
     image: 'pomegranate_tree_1773195451884.png',
     scientificName: 'Punica granatum',
     bio: 'Deciduous fruit-bearing shrub or small tree, notable for highly decorative flowers and red jewel-like arils.',
@@ -102,7 +102,7 @@ const ITEM_TYPES = {
   whiteRufflesPoppy: {
     label: 'White ruffles poppy',
     shortLabel: 'Poppy',
-    icon: '🌼',
+    icon: '<img src="./assets/icon_whiteRufflesPoppy.png" class="item-icon" />',
     image: 'white_ruffles_poppy_1773195464172.png',
     scientificName: 'Papaver somniferum',
     bio: 'Stunning ornamental poppy variety with deeply fringed, pure white petals resembling ruffled silk.',
@@ -111,7 +111,7 @@ const ITEM_TYPES = {
   passionFruit: {
     label: 'Passion fruit',
     shortLabel: 'Passion fruit',
-    icon: '🍇',
+    icon: '<img src="./assets/icon_passionFruit.png" class="item-icon" />',
     image: 'passion_fruit_1773195477245.png',
     scientificName: 'Passiflora edulis',
     bio: 'Vigorous climbing vine featuring incredibly complex, beautiful flowers and eventually, delicious tart fruits.',
@@ -120,7 +120,7 @@ const ITEM_TYPES = {
   rockingChair: {
     label: 'Rocking chair',
     shortLabel: 'Chair',
-    icon: '🪑',
+    icon: '<img src="./assets/icon_rockingChair.png" class="item-icon" />',
     image: 'rocking_chair_1773195491166.png'
   },
   lavender: {
@@ -152,6 +152,24 @@ const ITEM_TYPES = {
     shortLabel: 'Trellis',
     icon: '🪜',
     image: 'trellis_asset.png'
+  },
+  wisteria: {
+    label: 'Wisteria',
+    shortLabel: 'Wisteria',
+    icon: '🍇',
+    image: 'wisteria_asset.png',
+    scientificName: 'Wisteria sinensis',
+    bio: 'A vigorous climbing vine with cascading clusters of fragrant, purple flowers.',
+    conditions: 'Full sun to part shade, sturdy support needed.'
+  },
+  jasmine: {
+    label: 'Jasmine',
+    shortLabel: 'Jasmine',
+    icon: '🌼',
+    image: 'jasmine_asset.png',
+    scientificName: 'Jasminum',
+    bio: 'A popular climbing shrub known for its intensely fragrant, star-shaped white flowers.',
+    conditions: 'Full sun to part shade, regular watering, well-draining soil.'
   }
 };
 
@@ -791,8 +809,10 @@ function buildPresetSpec(kind) {
     case 'rockingChair': return { width: 2.2, height: 2.5, extra: {} };
     case 'lavender': return { width: 3, height: 3, extra: {} };
     case 'rosemary': return { width: 3.5, height: 3.5, extra: {} };
-    case 'bench': return { width: 4, height: 2, extra: {} };
+    case 'bench': return { width: 5, height: 1.8, extra: {} };
     case 'trellis': return { width: 4, height: 1, extra: {} };
+    case 'wisteria': return { width: 4, height: 4, extra: {} };
+    case 'jasmine': return { width: 4, height: 4, extra: {} };
     default: return { width: 2, height: 2, extra: {} };
   }
 }
